@@ -45,7 +45,7 @@ arch/
 ```
 # Maintainer: Jesse Steele <codes@jessesteele.com>
 pkgname=gophersay-git
-pkgver=1.0.0
+pkgver=1  # Must not be empty (can be anything), later replaced with the pkgver() function, getting the version from git so this does not need to be re-written on every release
 pkgrel=1
 pkgdesc="Gopher talkback written in Go for Linux"
 url="https://github.com/JesseSteele/gophersay"
@@ -53,21 +53,33 @@ arch=('x86_64')     # Go is newer and may not work on older systems, so not 'any
 license=('GPL')
 depends=('go')      # Depends on the 'go' package to build the binary
 replaces=('gophersay' 'gophersay-tar')
-source=("$_cmdname.repo::git+https://github.com/JesseSteele/$_cmdname.git") # gophersay.repo is just some name we can call it; '$_cmdname.repo::' could be omitted and we could use $_cmdname or 'gophersay'
-sha256sums=('SKIP') # We skip the hash since are cloning from git, so security is already dealt with, so the hash won't properly check on a repo/directory anyway
 
 # Custom variable "should" start with _
 # Not necessary, but may keep code clean (can remove this, then $_cmdname replace with 'gophersay' everywhere)
 _cmdname=gophersay
 
-build() {
+source=("$_cmdname.repo::git+https://github.com/JesseSteele/$_cmdname.git") # gophersay.repo is just some name we can call it; '$_cmdname.repo::' could be omitted and we could use $_cmdname or 'gophersay'
+sha256sums=('SKIP') # We skip the hash since are cloning from git, so security is already dealt with, so the hash won't properly check on a repo/directory anyway
 
+# Dynamically set pkgver= variable based on unique source versioning
+# Can go anywhere in PKGBUILD file, but usually variables are first, then functions after
+pkgver() {
+  cd "$pkgdir"
+    ( set -o pipefail
+      git describe --long --tags --abbrev=7 2>/dev/null | sed 's/\([^-]*-g\)/r\1/;s/-/./g' ||
+      git describe --long --abbrev=7 2>/dev/null | sed 's/\([^-]*-g\)/r\1/;s/-/./g' ||
+      printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short=7 HEAD)"
+  )
+}
+
+build() {
+  
   # Get into the root, where our to-be-compiled files are
-  cd $srcdir
+  cd "$srcdir"
 
   # Move our files into place from wherever we know they are inside the repo
-  cp "$_cmdname.repo/$_cmdname.go" . # Because we used '$_cmdname.repo::' in source=
-  #cp $_cmdname/$_cmdname.go .       # This would also work if we omit $_cmdname.repo::' from source=
+  cp "$pkgdir/$_cmdname.go" .  # Because we used 'something-here::' in source=
+  #cp $pkgname/$_cmdname.go .  # This would also work if we omit 'something-here::' from source=
 
   # Compile the Go binary
   go build -o "$_cmdname" "$_cmdname.go"
