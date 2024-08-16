@@ -1,0 +1,14 @@
+Source: gophersay
+Section: games
+Priority: optional
+Maintainer: Jesse Steele <codes@jessesteele.com>
+Homepage: https://github.com/JesseSteele/gophersay
+Vcs-Git: https://github.com/JesseSteele/gophersay
+Build-Depends: debhelper (>= 10), golang-go
+Standards-Version: 3.9.6
+
+Package: gophersay
+Version: 1.0.0
+Architecture: all
+Depends: bash (>= 4.0)
+Description: Gopher talkback written in Go for Linux
