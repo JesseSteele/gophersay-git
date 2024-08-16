@@ -195,6 +195,7 @@ Section: games
 Priority: optional
 Maintainer: Jesse Steele <codes@jessesteele.com>
 Homepage: https://github.com/JesseSteele/gophersay
+Vcs-Git: https://github.com/JesseSteele/gophersay
 Build-Depends: debhelper (>= 10), golang-go
 Standards-Version: 3.9.6
 
