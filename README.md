@@ -341,6 +341,10 @@ sudo dpkg -i gophersay.deb  # Install the package
 ```
 
 - Special notes about Debian
+  - This Debian builder relies on GitHub [releases](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases)
+    - Eg the `watch` file looks for a `.tar.gz` file for the repo, which is only available if releases are also issued
+      - `https://github.com/JesseSteele/gophersay .*/v?(\d\S*)\.tar\.gz`
+    - Releases are not automatically issued on GitHub, but are an important part of software intended for production
   - The `deb/build/` directory can be anything, but we want it for housekeeping...
     - `dpkg-buildpackage` will create a laundry list of files as peers to this directory in `deb/`
   - The `debian/control` file builds `DEBIAN/control`, but uses different fields
