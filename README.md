@@ -1,4 +1,4 @@
-# gophersay
+# gophersay-git
 ## The talking gopher
 Gopher talkback written in Go for Linux
 
@@ -88,7 +88,7 @@ pkgname=gophersay-git
 pkgver=1  # Must not be empty (can be anything), later replaced with the pkgver() function, getting the version from git so this does not need to be re-written on every release
 pkgrel=1
 pkgdesc="Gopher talkback written in Go for Linux"
-url="https://github.com/JesseSteele/gophersay"
+url="https://github.com/JesseSteele/gophersay-git"
 arch=('x86_64')     # Go is newer and may not work on older systems, so not 'any'
 license=('GPL')
 depends=('go')      # Depends on the 'go' package to build the binary
@@ -104,7 +104,7 @@ sha256sums=('SKIP') # We skip the hash since are cloning from git, so security i
 # Dynamically set pkgver= variable based on unique source versioning
 # Can go anywhere in PKGBUILD file, but usually variables are first, then functions after
 pkgver() {
-  cd "$pkgdir"
+  cd "$_cmdname.repo"
     ( set -o pipefail
       git describe --long --tags --abbrev=7 2>/dev/null | sed 's/\([^-]*-g\)/r\1/;s/-/./g' ||
       git describe --long --abbrev=7 2>/dev/null | sed 's/\([^-]*-g\)/r\1/;s/-/./g' ||
@@ -118,7 +118,7 @@ build() {
   cd "$srcdir"
 
   # Move our files into place from wherever we know they are inside the repo
-  cp "$pkgdir/$_cmdname.go" .  # Because we used 'something-here::' in source=
+  cp "$_cmdname.repo/$_cmdname.go" .  # Because we used 'something-here::' in source=
   #cp $pkgname/$_cmdname.go .  # This would also work if we omit 'something-here::' from source=
 
   # Compile the Go binary
@@ -190,17 +190,17 @@ deb/
 | **`deb/build/debian/control`** :
 
 ```
-Source: gophersay
+Source: gophersay-git
 Section: games
 Priority: optional
 Maintainer: Jesse Steele <codes@jessesteele.com>
-Homepage: https://github.com/JesseSteele/gophersay
+Homepage: https://github.com/JesseSteele/gophersay-git
 Vcs-Git: https://github.com/JesseSteele/gophersay
 Build-Depends: debhelper (>= 10), golang-go
 Standards-Version: 3.9.6
 
-Package: gophersay
-Version: 1.0.0
+Package: gophersay-git
+#Version: 1.0.0 # No! Inherited from `debian/changelog`
 Architecture: all
 Depends: bash (>= 4.0)
 Description: Gopher talkback written in Go for Linux
@@ -219,7 +219,7 @@ Description: Gopher talkback written in Go for Linux
 | **`deb/build/debian/changelog`** : (optional, for listing changes)
 
 ```
-gophersay (1.0-1) stable; urgency=low
+gophersay-git (1.0.0-1) stable; urgency=low
 
   * First release
 
@@ -232,8 +232,8 @@ gophersay (1.0-1) stable; urgency=low
 
 ```
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: gophersay
-Source: https://github.com/JesseSteele/gophersay
+Upstream-Name: gophersay-git
+Source: https://github.com/JesseSteele/gophersay-git
 
 Files: *
 Copyright: 2024, Jesse Steele <codes@jessesteele.com>
@@ -383,13 +383,13 @@ rpm/
 | **`rpm/rpmbuild/SPECS/gophersay.spec`** :
 
 ```
-Name:           gophersay
+Name:           gophersay-git
 Version:        1.0.0
 Release:        1%{?dist}
 Summary:        The talking gopher
 
 License:        GPL
-URL:            https://github.com/JesseSteele/gophersay
+URL:            https://github.com/JesseSteele/gophersay-git
 Source0:        gophersay.go
 
 BuildArch:      noarch

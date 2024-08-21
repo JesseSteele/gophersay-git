@@ -1,10 +1,10 @@
-Name:           gophersay
+Name:           gophersay-git
 Version:        1.0.0
 Release:        1%{?dist}
 Summary:        The talking gopher
 
 License:        GPL
-URL:            https://github.com/JesseSteele/gophersay
+URL:            https://github.com/JesseSteele/gophersay-git
 Source0:        gophersay.go
 
 BuildArch:      noarch
