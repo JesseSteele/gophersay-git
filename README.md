@@ -46,7 +46,7 @@ sudo dnf install rpm-build rpmdevtools go
 cp -rf gophersay-git/rpm/rpmbuild ~/
 rpmbuild -ba ~/rpmbuild/SPECS/gophersay-git.spec
 ls ~/rpmbuild/RPMS/noarch/
-sudo rpm -i ~/rpmbuild/RPMS/noarch/gophersay-1.0.0-1.noarch.rpm  # Change filename if needed
+sudo rpm -i ~/rpmbuild/RPMS/noarch/gophersay-git-1.0.0-1.noarch.rpm  # Change filename if needed
 rm -rf ~/rpmbuild
 ```
 
@@ -60,7 +60,7 @@ sudo zypper install rpm-build rpmdevtools go
 cp -r rpmbuild ~/
 rpmbuild -ba ~/rpmbuild/SPECS/gophersay-git.spec
 ls ~/rpmbuild/RPMS/noarch/
-sudo rpm -i ~/rpmbuild/RPMS/noarch/gophersay-1.0.0-1.noarch.rpm  # Change filename if needed
+sudo rpm -i ~/rpmbuild/RPMS/noarch/gophersay-git-1.0.0-1.noarch.rpm  # Change filename if needed
 rm -rf ~/rpmbuild
 ```
 
@@ -255,6 +255,7 @@ https://github.com/JesseSteele/gophersay .*/v?(\d\S*)\.tar\.gz
 ```
 
 - In `debian/` create file: `rules`
+  - Note that only <kbd>tab</kbd> characters are allowed for indented lines, not sequential spaces
   - Make it executable with :$ `chmod +x debian/rules`
 
 | **`deb/build/debian/rules`** : (build compiler)
@@ -266,14 +267,13 @@ https://github.com/JesseSteele/gophersay .*/v?(\d\S*)\.tar\.gz
 	dh $@
 
 override_dh_auto_build:
-    git clone https://github.com/JesseSteele/gophersay
-    cp gophersay/gophersay.go .
+	git clone https://github.com/JesseSteele/gophersay
+	cp gophersay/gophersay.go .
 	go build -o gophersay gophersay.go
 	rm -rf gophersay
 
 override_dh_auto_install:
 	install -D -m 0755 gophersay $(DESTDIR)/usr/bin/gophersay
-
 ```
 
 - In `debian/` create file: `install`
@@ -407,14 +407,15 @@ Gopher talkback written in Go for Linux
 
 %prep
 git clone https://github.com/JesseSteele/gophersay
-cd gophersay
 
 %build
+cd gophersay
 go build -o gophersay gophersay.go
 
 %install
 mkdir -p %{buildroot}/usr/bin
-install -D -m 0755 gophersay %{buildroot}/usr/bin/gophersay
+cd gophersay
+install -m 0755 gophersay %{buildroot}/usr/bin/gophersay
 
 %files
 /usr/bin/gophersay
@@ -450,7 +451,7 @@ sudo zypper install rpm-build rpmdevtools go
 cp -r rpmbuild ~/
 rpmbuild -ba ~/rpmbuild/SPECS/gophersay-git.spec                     # Create the .rpm package
 ls ~/rpmbuild/RPMS/noarch/                                        # Check the .rpm filename
-sudo rpm -i ~/rpmbuild/RPMS/noarch/gophersay-1.0.0-1.noarch.rpm  # Install the package (filename may be different)
+sudo rpm -i ~/rpmbuild/RPMS/noarch/gophersay-git-1.0.0-1.noarch.rpm  # Install the package (filename may be different)
 ```
 
 - Special notes about RPM:

@@ -4,8 +4,8 @@
 	dh $@
 
 override_dh_auto_build:
-    git clone https://github.com/JesseSteele/gophersay
-    cp gophersay/gophersay.go .
+	git clone https://github.com/JesseSteele/gophersay
+	cp gophersay/gophersay.go .
 	go build -o gophersay gophersay.go
 	rm -rf gophersay
 

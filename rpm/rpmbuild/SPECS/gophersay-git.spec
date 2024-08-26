@@ -16,14 +16,15 @@ Gopher talkback written in Go for Linux
 
 %prep
 git clone https://github.com/JesseSteele/gophersay
-cd gophersay
 
 %build
+cd gophersay
 go build -o gophersay gophersay.go
 
 %install
 mkdir -p %{buildroot}/usr/bin
-install -D -m 0755 gophersay %{buildroot}/usr/bin/gophersay
+cd gophersay
+install -m 0755 gophersay %{buildroot}/usr/bin/gophersay
 
 %files
 /usr/bin/gophersay
