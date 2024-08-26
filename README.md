@@ -28,6 +28,8 @@ makepkg -si
 
 ```console
 git clone https://github.com/JesseSteele/gophersay-git.git
+sudo apt-get update
+sudo apt-get install dpkg-dev debhelper golang-go
 cd gophersay-git/deb/build
 sudo dpkg-buildpackage -us -uc
 cd debian
@@ -40,9 +42,9 @@ sudo dpkg -i gophersay.deb
 ```console
 git clone https://github.com/JesseSteele/gophersay-git.git
 sudo dnf update
-sudo dnf install rpm-build rpmdevtools
+sudo dnf install rpm-build rpmdevtools go
 cp -rf gophersay-git/rpm/rpmbuild ~/
-rpmbuild -ba ~/rpmbuild/SPECS/gophersay.spec
+rpmbuild -ba ~/rpmbuild/SPECS/gophersay-git.spec
 ls ~/rpmbuild/RPMS/noarch/
 sudo rpm -i ~/rpmbuild/RPMS/noarch/gophersay-1.0.0-1.noarch.rpm  # Change filename if needed
 rm -rf ~/rpmbuild
@@ -54,9 +56,9 @@ rm -rf ~/rpmbuild
 git clone https://github.com/JesseSteele/gophersay-git.git
 cd gophersay-git/rpm
 sudo zypper update
-sudo zypper install rpm-build rpmdevtools
+sudo zypper install rpm-build rpmdevtools go
 cp -r rpmbuild ~/
-rpmbuild -ba ~/rpmbuild/SPECS/gophersay.spec
+rpmbuild -ba ~/rpmbuild/SPECS/gophersay-git.spec
 ls ~/rpmbuild/RPMS/noarch/
 sudo rpm -i ~/rpmbuild/RPMS/noarch/gophersay-1.0.0-1.noarch.rpm  # Change filename if needed
 rm -rf ~/rpmbuild
@@ -172,17 +174,20 @@ sudo pacman -R gophersay-git
 
 ```
 deb/
-└─ debian/
-   ├─ source/
-   │  └─ format
-   ├─ compat
-   ├─ control
-   ├─ copyright
-   ├─ changelog
-   ├─ install
-   └─ rules
+└─ build/
+   └─ debian/
+      ├─ source/
+      │  └─ format
+      ├─ compat
+      ├─ control
+      ├─ copyright
+      ├─ changelog
+      ├─ watch
+      ├─ install
+      └─ rules
 ```
 
+#### Create Mainainer Package Director Structure
 - Create directories: `deb/build/debian`
 - In `debian/` create file: `control`
   - Learn about the [Debian source package template control file](https://www.debian.org/doc/debian-policy/ch-controlfields.html#debian-source-package-template-control-files-debian-control)
@@ -240,15 +245,6 @@ Copyright: 2024, Jesse Steele <codes@jessesteele.com>
 License: GPL-3+
 ```
 
-- Create subdirectory: `deb/build/debian/source/`
-- In `debian/source/` create file: `format`
-
-| **`deb/build/debian/source/format`** : (source package format)
-
-```
-3.0 (quilt)
-```
-
 - In `debian/` create file: `watch`
 
 | **`deb/build/debian/watch`** : (dynamic version based on Git)
@@ -288,6 +284,16 @@ override_dh_auto_install:
 gophersay /usr/bin
 ```
 
+- Create subdirectory: `deb/build/debian/source/`
+- In `debian/source/` create file: `format`
+
+| **`deb/build/debian/source/format`** : (source package format)
+
+```
+3.0 (quilt)
+```
+
+#### Build the Package Directories
 - Install the `dpkg-dev`, `debhelper` & `golang-go` packages
 
 | **Install Debian `dpkg-dev` package** :$
@@ -310,7 +316,7 @@ sudo dpkg-buildpackage -us -uc  # Create the package builder
 - Note what just happened
   - Everything just done to this point is called "**maintainer**" work in the Debian world
   - Basic repo packages *and also* the package `DEBIAN/` builder structure were greated
-  - At this point, one could navigate up one directory to `deb/` and run `sudo dpkg -i gophersay_1.0-1_all.deb` and the package would be installed, *but we won't do this*
+  - At this point, one could navigate up one directory to `deb/` and run `sudo dpkg -i gophersay_1.0.0-1_all.deb` and the package would be installed, *but we won't do this*
   - The command has also been created at `/usr/bin/gophersay`
     - Once installed with `sudo dpkg -i` (later) this can be removed the standard way with `sudo apt-get remove gophersay`
   - This is the new, just-created directory structure for the standard Debian package builder:
@@ -357,7 +363,7 @@ sudo dpkg -i gophersay.deb  # Install the package
     - Trying to install a file will return an [error from the package manager](https://unix.stackexchange.com/questions/409800/) since it expects directories, but only finds a file
   - The standard package build files (for `dpkg-deb --build`) will appear at `deb/build/debian/gophersay/DEBIAN/`
     - So from `deb/build/debian/` one could run `dpkg-deb --build gophersay` to create the `.deb` package at `deb/build/debian/gophersay.deb`
-  - The standard package installer will appear at `deb/gophersay_1.0-1_all.deb`
+  - The standard package installer will appear at `deb/gophersay_1.0.0-1_all.deb`
 
 | **Remove Debian package** :$ (optional)
 
@@ -374,13 +380,13 @@ sudo apt-get remove gophersay
 rpm/
 └─ rpmbuild/
    └─ SPECS/
-      └─ gophersay.spec
+      └─ gophersay-git.spec
 ```
 
 - Create directories: `rpm/rpmbuild/SPECS`
-- In `SPECS/` create file: `gophersay.spec`
+- In `SPECS/` create file: `gophersay-git.spec`
 
-| **`rpm/rpmbuild/SPECS/gophersay.spec`** :
+| **`rpm/rpmbuild/SPECS/gophersay-git.spec`** :
 
 ```
 Name:           gophersay-git
@@ -390,11 +396,11 @@ Summary:        The talking gopher
 
 License:        GPL
 URL:            https://github.com/JesseSteele/gophersay-git
-Source0:        gophersay.go
+#Source0:        gophersay.go
 
 BuildArch:      noarch
 BuildRequires:  git, go
-Requires:       go
+Requires:       bash
 
 %description
 Gopher talkback written in Go for Linux
@@ -414,27 +420,24 @@ install -D -m 0755 gophersay %{buildroot}/usr/bin/gophersay
 /usr/bin/gophersay
 
 %changelog
--------------------------------------------------------------------
-Thu Jan 01 00:00:00 UTC 1970 codes@jessesteele.com
+* Thu Jan 01 1970 Jesse Steele <codes@jessesteele.com> - 1.0.0-1
 - Something started, probably with v1.0.0-1
 ```
 
-- Create directory: `rpm/rpmbuild/SOURCES/`
-- Place files `gophersay.go` & `go.mod` in directory `rpm/rpmbuild/SOURCES/`
-- Install the `rpm-build` and `rpmdevtools` packages
+- Install the `rpm-build`, `rpmdevtools` & `go` packages
 
 | **RedHat/CentOS** :$
 
 ```console
 sudo dnf update
-sudo dnf install rpm-build rpmdevtools
+sudo dnf install rpm-build rpmdevtools go
 ```
 
 | **OpenSUSE** :$
 
 ```console
 sudo zypper update
-sudo zypper install rpm-build rpmdevtools
+sudo zypper install rpm-build rpmdevtools go
 ```
 
 - Build package:
@@ -445,7 +448,7 @@ sudo zypper install rpm-build rpmdevtools
 
 ```console
 cp -r rpmbuild ~/
-rpmbuild -ba ~/rpmbuild/SPECS/gophersay.spec                     # Create the .rpm package
+rpmbuild -ba ~/rpmbuild/SPECS/gophersay-git.spec                     # Create the .rpm package
 ls ~/rpmbuild/RPMS/noarch/                                        # Check the .rpm filename
 sudo rpm -i ~/rpmbuild/RPMS/noarch/gophersay-1.0.0-1.noarch.rpm  # Install the package (filename may be different)
 ```
@@ -456,9 +459,7 @@ sudo rpm -i ~/rpmbuild/RPMS/noarch/gophersay-1.0.0-1.noarch.rpm  # Install the p
     - This file might actually have a different name, but should be in the same directory (`~/rpmbuild/RPMS/noarch/`)
   - `noarch` means it works on any architecture
     - This part of the filename was set in the `.spec` file with `BuildArch: noarch`
-  - The `%changelog` is for OpenSUSE's `zypper`
-    - RedHat/CentOS may want the date line like this:
-      - `* Thu Jan 01 1970 Jesse Steele <codes@jessesteele.com> - 1.0.0-1`
+  - If you get `changelog` or `bad date` error, then consider yourself normal
 
 | **Remove RedHat/CentOS package** :$ (optional)
 

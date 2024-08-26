@@ -5,11 +5,11 @@ Summary:        The talking gopher
 
 License:        GPL
 URL:            https://github.com/JesseSteele/gophersay-git
-Source0:        gophersay.go
+#Source0:        gophersay.go
 
 BuildArch:      noarch
 BuildRequires:  git, go
-Requires:       go
+Requires:       bash
 
 %description
 Gopher talkback written in Go for Linux
@@ -29,6 +29,5 @@ install -D -m 0755 gophersay %{buildroot}/usr/bin/gophersay
 /usr/bin/gophersay
 
 %changelog
--------------------------------------------------------------------
-Thu Jan 01 00:00:00 UTC 1970 codes@jessesteele.com
+* Thu Jan 01 1970 Jesse Steele <codes@jessesteele.com> - 1.0.0-1
 - Something started, probably with v1.0.0-1
