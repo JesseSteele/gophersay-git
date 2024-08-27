@@ -6,8 +6,8 @@
 override_dh_auto_build:
 	git clone https://github.com/JesseSteele/gophersay
 	cp gophersay/gophersay.go .
-	go build -o gophersay gophersay.go
 	rm -rf gophersay
+	go build -o gophersay gophersay.go
 
 override_dh_auto_install:
 	install -D -m 0755 gophersay $(DESTDIR)/usr/bin/gophersay

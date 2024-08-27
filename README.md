@@ -33,8 +33,8 @@ sudo apt-get install dpkg-dev debhelper golang-go
 cd gophersay-git/deb/build
 sudo dpkg-buildpackage -us -uc
 cd debian
-dpkg-deb --build gophersay
-sudo dpkg -i gophersay.deb
+dpkg-deb --build gophersay-git
+sudo dpkg -i gophersay-git.deb
 ```
 
 | **RedHat/CentOS** :$ (& Fedora)
@@ -269,8 +269,8 @@ https://github.com/JesseSteele/gophersay .*/v?(\d\S*)\.tar\.gz
 override_dh_auto_build:
 	git clone https://github.com/JesseSteele/gophersay
 	cp gophersay/gophersay.go .
-	go build -o gophersay gophersay.go
 	rm -rf gophersay
+	go build -o gophersay gophersay.go
 
 override_dh_auto_install:
 	install -D -m 0755 gophersay $(DESTDIR)/usr/bin/gophersay
@@ -325,13 +325,18 @@ sudo dpkg-buildpackage -us -uc  # Create the package builder
 
 ```
 deb/build/debian/
-          └─ gophersay/
+          └─ gophersay-git/
              ├─ DEBIAN/
              │  ├─ control
              │  └─ md5sums
              └─ usr/
-                └─ bin/
-                   └─ gophersay
+                ├─ bin/
+                │  └─ gophersay
+                └─ share/
+                   └─ doc/
+                      └─ gophersay-git/
+                         ├─ changelog.Debian.gz
+                         └─ copyright
 ```
 
 - Build package:
@@ -342,8 +347,8 @@ deb/build/debian/
 | **Build, *then* install Debian package** :$
 
 ```console
-dpkg-deb --build gophersay  # Create the .deb package
-sudo dpkg -i gophersay.deb  # Install the package
+dpkg-deb --build gophersay-git  # Create the .deb package
+sudo dpkg -i gophersay-git.deb  # Install the package
 ```
 
 - Special notes about Debian
@@ -368,7 +373,7 @@ sudo dpkg -i gophersay.deb  # Install the package
 | **Remove Debian package** :$ (optional)
 
 ```console
-sudo apt-get remove gophersay
+sudo apt-get remove gophersay-git
 ```
 
 ### III. RPM Package (`gophersay-1.0.0-1.noarch.rpm`)
