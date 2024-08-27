@@ -1,0 +1,7 @@
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: gophersay-git
+Source: https://github.com/JesseSteele/gophersay-git
+
+Files: *
+Copyright: 2024, Jesse Steele <codes@jessesteele.com>
+License: GPL-3+
