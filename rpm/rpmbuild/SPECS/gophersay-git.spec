@@ -9,9 +9,12 @@ URL:            https://github.com/JesseSteele/gophersay-git
 BuildArch:      noarch
 BuildRequires:  git, go
 Requires:       bash
+Obsoletes:      gophersay gophersay-bin gophersay-tar
+Conflicts:      gophersay gophersay-bin gophersay-tar
+Provides:       gophersay
 
 %description
-Gopher talkback written in Go for Linux
+Gopher talkback written in Go for Linux (GitHub compiler)
 
 %prep
 git clone https://github.com/JesseSteele/gophersay

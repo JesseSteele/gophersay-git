@@ -67,6 +67,9 @@ rm -rf ~/rpmbuild
 ## Detailed instructions per architecture
 Instructions explain each in detail to create these packages from scratch...
 
+### Preparation
+- We use the namespace `gophersay-git` for the package, but still use the command as `gophersay`
+- These installers use a GitHub repo for the installation
 - These instructions presume you can access [gophersay.go](https://github.com/JesseSteele/gophersay/blob/main/gophersay.go)
 
 ### I. Arch Linux Package (`gophersay-git-1.0.0-1-x86_64.pkg.tar.zst`)
@@ -89,12 +92,14 @@ arch/
 pkgname=gophersay-git
 pkgver=1  # Must not be empty (can be anything), later replaced with the pkgver() function, getting the version from git so this does not need to be re-written on every release
 pkgrel=1
-pkgdesc="Gopher talkback written in Go for Linux"
+pkgdesc="Gopher talkback written in Go for Linux (GitHub compiler)"
 url="https://github.com/JesseSteele/gophersay-git"
 arch=('x86_64')     # Go is newer and may not work on older systems, so not 'any'
 license=('GPL')
 depends=('go')      # Depends on the 'go' package to build the binary
-replaces=('gophersay' 'gophersay-tar')
+provides=('gophersay')
+replaces=('gophersay' 'gophersay-bin' 'gophersay-tar')
+conflicts=('gophersay' 'gophersay-bin' 'gophersay-tar')
 
 # Custom variable "should" start with _
 # Not necessary, but may keep code clean (can remove this, then $_cmdname replace with 'gophersay' everywhere)
@@ -167,7 +172,7 @@ sudo pacman -U gophersay-git-1.0.0-1-x86_64.pkg.tar.zst
 sudo pacman -R gophersay-git
 ```
 
-### II. Debian Package (`gophersay.deb`)
+### II. Debian Package (`gophersay-git.deb`)
 *Debian "**maintainer**" build directory structure:*
 
 | **`deb/`** :
@@ -208,7 +213,10 @@ Package: gophersay-git
 #Version: 1.0.0 # No! Inherited from `debian/changelog`
 Architecture: all
 Depends: bash (>= 4.0)
-Description: Gopher talkback written in Go for Linux
+Replaces: gophersay, gophersay-bin, gophersay-tar
+Conflicts: gophersay, gophersay-bin, gophersay-tar
+Provides: gophersay
+Description: Gopher talkback written in Go for Linux (GitHub compiler)
 ```
 
 - In `debian/` create file: `compat`
@@ -376,7 +384,7 @@ sudo dpkg -i gophersay-git.deb  # Install the package
 sudo apt-get remove gophersay-git
 ```
 
-### III. RPM Package (`gophersay-1.0.0-1.noarch.rpm`)
+### III. RPM Package (`gophersay-git-1.0.0-1.noarch.rpm`)
 *RPM package directory structure:*
 
 | **`rpm/`** :
@@ -405,9 +413,12 @@ URL:            https://github.com/JesseSteele/gophersay-git
 BuildArch:      noarch
 BuildRequires:  git, go
 Requires:       bash
+Obsoletes:      gophersay gophersay-bin gophersay-tar
+Conflicts:      gophersay gophersay-bin gophersay-tar
+Provides:       gophersay
 
 %description
-Gopher talkback written in Go for Linux
+Gopher talkback written in Go for Linux (GitHub compiler)
 
 %prep
 git clone https://github.com/JesseSteele/gophersay

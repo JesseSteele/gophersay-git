@@ -2,12 +2,14 @@
 pkgname=gophersay-git
 pkgver=1  # Must not be empty (can be anything), later replaced with the pkgver() function, getting the version from git so this does not need to be re-written on every release
 pkgrel=1
-pkgdesc="Gopher talkback written in Go for Linux"
+pkgdesc="Gopher talkback written in Go for Linux (GitHub compiler)"
 url="https://github.com/JesseSteele/gophersay-git"
 arch=('x86_64')     # Go is newer and may not work on older systems, so not 'any'
 license=('GPL')
 depends=('go')      # Depends on the 'go' package to build the binary
-replaces=('gophersay' 'gophersay-tar')
+provides=('gophersay')
+replaces=('gophersay' 'gophersay-bin' 'gophersay-tar')
+conflicts=('gophersay' 'gophersay-bin' 'gophersay-tar')
 
 # Custom variable "should" start with _
 # Not necessary, but may keep code clean (can remove this, then $_cmdname replace with 'gophersay' everywhere)
